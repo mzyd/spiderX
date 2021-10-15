@@ -1,6 +1,7 @@
 const fs = require('fs')
 const http = require('http')
 const https = require('https')
+var flag = true
 
 function getLastImageNum(dirName) {
 
@@ -14,9 +15,16 @@ function getLastImageNum(dirName) {
   })
 
   const readDir = fs.readdirSync(dirName)
-  last = readDir.length > 0 ? readDir[readDir.length - 1].replace(/\.png/, '') : 0
-  last = parseInt(last)
-  return last
+  if (readDir.length < 1) {
+    console.error('Error: Therr is no files')
+    return 0
+  }
+  var last = readDir.toString().replace(/\.png/g, '')
+      .replace(/\.DS_Store,/, '')
+      .split(',')
+      .map((item) => parseInt(item))
+      .sort((a, b) => a - b)
+  return last[last.length - 1]
 }
 
 function downloadByHttps(pic, dirName, last) {
@@ -38,8 +46,10 @@ function downloadByHttps(pic, dirName, last) {
 
 module.exports = function downloadImage(list, dirName) {
 
+  if (!flag) return
   let last = getLastImageNum(dirName)
   last = last ? last + 1 : 0
+  flag = false
 
   for(let i = 0; i < list.length; i++){
     console.log(`第${i + 1}张图片开始下载`)

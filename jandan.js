@@ -1,7 +1,4 @@
-// const https = require('https')
-// const http = require('http')
 const cheerio = require('cheerio')
-const fs = require('fs')
 const { http } = require('./request')
 const downloadImage = require('./download')
 
@@ -10,21 +7,8 @@ const downloadImage = require('./download')
 const reg = /\d{4}-\d{2}-\d{2}/
 let date = new Date()
 date = date.toISOString().split('T')[0]
-date = reg.exec(date)[0]
-var page = '2'
-
-
-// http.get('http://tva1.sinaimg.cn/large/002oJcAwgy1gv4ix3y2nfj60tz0x4wgj02.jpg', function(res){
-//   let html = ''
-//   res.on('data', function(chunk){
-//     html += chunk
-//   })
-//   res.on('end', function() {
-//     console.log('html--', html)
-//     resolve(html)
-//   })
-// })
-
+date = reg.exec(date)[0].replace(/-/g, '')
+var page = '-138'
 
 function start() {
 
@@ -32,8 +16,13 @@ function start() {
     return console.error('Err: date is null')
   }
 
+  const pageFromTer = process.argv[2]
+  if (pageFromTer && /\d+/.test(pageFromTer) && pageFromTer > 0) {
+    page = '-' + process.argv[2]
+  }
+
   const buff = Buffer.from(date + page, 'utf-8');
-  const datepage = buff.toString('base64').replace(/=/, '')
+  let datepage = buff.toString('base64').replace(/=/, '')
   const url = `http://jandan.net/pic/${datepage}#comments`
 
   http(url).then(res => {
@@ -46,4 +35,5 @@ function start() {
     downloadImage(elems, './fuss-jandan')
   })
 }
+
 start()
