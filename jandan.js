@@ -16,7 +16,7 @@ function start() {
     return console.error('Err: date is null')
   }
 
-
+  // https://wx2.sinaimg.cn/mw1024/7dd42f11ly1gw42rd7u0ug20c006ou0y.gif
   const pageFromTer = process.argv[2]
   if (pageFromTer && /\d+/.test(pageFromTer) && pageFromTer > 0) {
     page = '-' + process.argv[2]
@@ -26,6 +26,11 @@ function start() {
   let datepage = buff.toString('base64').replace(/=/, '')
   let url = `http://jandan.net/pic/${datepage}#comments`
 
+  if (pageFromTer.includes('https') && pageFromTer.includes('.')) {
+    console.log('pppppp', pageFromTer)
+    downloadImage([{ pic: pageFromTer }], './fuss-jandan')
+    return
+  }
   if (pageFromTer.includes('https')) {
     url = 'https://jandan.net/top-3days'
     request(url).then(res => {

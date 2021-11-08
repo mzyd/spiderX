@@ -2,3 +2,4 @@ node_modules/
 fuss-*
 
 films.json
+*.log
